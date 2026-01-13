@@ -484,7 +484,6 @@ class HiddenStatesGenerator:
                         last_hidden_states_list,
                     )
                 ):
-
                     # Process ONE sample at a time to minimize CPU RAM footprint
                     # 1. Transfer only the required slice for one sample to CPU
                     aux_hidden_states = (
@@ -563,9 +562,9 @@ def main():
         )
 
     # Load complete dataset
-    assert os.path.exists(
-        args.data_path
-    ), f"Dataset path {args.data_path} does not exist"
+    assert os.path.exists(args.data_path), (
+        f"Dataset path {args.data_path} does not exist"
+    )
     dataset = load_dataset("json", data_files=args.data_path)["train"]
     if args.num_samples is not None:
         dataset = dataset.select(range(args.num_samples))
@@ -641,7 +640,6 @@ def main():
             file_group_size=args.file_group_size,
             # Other params like io_queue_size can also be added to argparse
         ) as hidden_states_generator:
-
             # Generate hidden states
             hidden_states_generator.generate(
                 data_loader,

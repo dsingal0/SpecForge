@@ -261,7 +261,6 @@ class HFDFlashTargetModel(DFlashTargetModel):
         cache_dir: Optional[str] = None,
         **kwargs,
     ) -> "HFDFlashTargetModel":
-
         target_model = AutoModelForCausalLM.from_pretrained(
             pretrained_model_name_or_path,
             torch_dtype=torch_dtype,

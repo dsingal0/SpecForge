@@ -10,7 +10,6 @@ from specforge.distributed import get_tp_group, shard_tensor
 
 
 class VocabParallelEmbedding(nn.Module):
-
     def __init__(
         self,
         num_embeddings: int,
@@ -35,13 +34,13 @@ class VocabParallelEmbedding(nn.Module):
 
         if padding_idx is not None:
             if padding_idx > 0:
-                assert (
-                    padding_idx < self.num_embeddings
-                ), "Padding_idx must be within num_embeddings"
+                assert padding_idx < self.num_embeddings, (
+                    "Padding_idx must be within num_embeddings"
+                )
             elif padding_idx < 0:
-                assert (
-                    padding_idx >= -self.num_embeddings
-                ), "Padding_idx must be within num_embeddings"
+                assert padding_idx >= -self.num_embeddings, (
+                    "Padding_idx must be within num_embeddings"
+                )
                 padding_idx = self.num_embeddings + padding_idx
 
         # tp-realted

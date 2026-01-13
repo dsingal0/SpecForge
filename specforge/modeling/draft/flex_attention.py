@@ -108,7 +108,6 @@ def compile_friendly_create_block_mask(
 def generate_eagle3_mask(
     seq_lengths: torch.Tensor, Q_LEN: int, KV_LEN: int, lck: int = 0
 ):
-
     def causal_mask(b, h, q_idx, kv_idx):
         # Causal will keep shrinking by 1 diagnol due to appended suffix
         # Shirnk the causal by diagnol

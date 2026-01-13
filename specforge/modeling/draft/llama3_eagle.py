@@ -428,7 +428,6 @@ def yarn_linear_ramp_mask(min_val, max_val, dim):
 
 
 class LlamaYarnRotaryEmbedding(LlamaRotaryEmbedding):
-
     def __init__(
         self,
         dim,
@@ -737,9 +736,9 @@ class LlamaAttention(nn.Module):
 class LlamaUSPAttention(LlamaAttention):
     def __init__(self, config):
         super().__init__(config)
-        assert (
-            dist.is_initialized()
-        ), f"LlamaUSPAttention requires torch.distributed; call init_distributed first."
+        assert dist.is_initialized(), (
+            "LlamaUSPAttention requires torch.distributed; call init_distributed first."
+        )
         self.rank = torch.distributed.get_rank()
         self.ring_pg = get_sp_ring_group()
         self.ulysses_pg = get_sp_ulysses_group()
@@ -1315,7 +1314,6 @@ class LlamaDecoderLayer(nn.Module):
 
 
 class LlamaForCausalLMEagle3(Eagle3DraftModel):
-
     config_class = LlamaConfig
 
     def __init__(self, config, quant_config=None, attention_backend="sdpa") -> None:

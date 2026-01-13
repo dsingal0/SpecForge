@@ -4,7 +4,6 @@ from specforge.modeling.auto import AutoEagle3DraftModel, LlamaForCausalLMEagle3
 
 
 class TestAutoModelForCausalLM(unittest.TestCase):
-
     def test_automodel(self):
         """init"""
         model = AutoEagle3DraftModel.from_pretrained(

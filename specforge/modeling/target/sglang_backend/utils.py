@@ -107,9 +107,9 @@ def replaced_logits_processor_forward_for_eagle3(
         else:
             assert False, "Should never reach"
 
-    assert (
-        not logits_metadata.extend_return_logprob
-    ), "extend_return_logprob is not supported"
+    assert not logits_metadata.extend_return_logprob, (
+        "extend_return_logprob is not supported"
+    )
     # Decode mode or extend mode without return_logprob.
     return ReplacedLogitsProcessorEagle3Output(
         logits=logits,

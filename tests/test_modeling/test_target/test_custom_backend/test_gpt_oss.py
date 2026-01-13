@@ -88,7 +88,6 @@ def test_gpt_oss_tp(rank, world_size, temp_dir, port):
 
 
 class TestGptOssTP(unittest.TestCase):
-
     def setUp(self):
         self.temp_dir = tempfile.TemporaryDirectory()
 

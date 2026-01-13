@@ -330,9 +330,9 @@ def build_eagle3_dataset(
     if chat_template is None:
         raise ValueError("chat_template must be provided for all dataset types")
 
-    assert (
-        chat_template in TEMPLATE_REGISTRY.get_all_template_names()
-    ), f"Chat template {chat_template} not found in TEMPLATE_REGISTRY, you may need to register it first"
+    assert chat_template in TEMPLATE_REGISTRY.get_all_template_names(), (
+        f"Chat template {chat_template} not found in TEMPLATE_REGISTRY, you may need to register it first"
+    )
 
     template: ChatTemplate = TEMPLATE_REGISTRY.get(chat_template)
 
@@ -390,10 +390,10 @@ def build_eagle3_dataset(
     elif cache_dir is None and cache_key is None:
         load_from_cache_file = False
         cache_file_name = None
-        print(f"dataset is not cached")
+        print("dataset is not cached")
     else:
         warnings.warn(
-            f"cache_dir and cache_key must be provided together to make caching work"
+            "cache_dir and cache_key must be provided together to make caching work"
         )
 
     # adjust batch size based on dataset type

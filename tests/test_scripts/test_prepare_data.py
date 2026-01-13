@@ -7,7 +7,6 @@ CACHE_DIR = Path(__file__).parent.parent.parent.joinpath("cache")
 
 
 class TestPrepareData(unittest.TestCase):
-
     def test_prepare_sharegpt(self):
         sharegpt_train_path = CACHE_DIR.joinpath("dataset", "sharegpt_train.jsonl")
 

@@ -44,7 +44,6 @@ logger = logging.getLogger(__name__)
 
 
 class SGLangRunner(ModelRunner):
-
     def init_torch_distributed(self):
         logger.info("Init torch distributed begin.")
 

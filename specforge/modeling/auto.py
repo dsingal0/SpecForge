@@ -111,9 +111,9 @@ class AutoDistributedTargetModel(AutoModelForCausalLMBase):
         if isinstance(config, Llama4Config):
             config = config.text_config
 
-        assert (
-            type(config) in cls._model_mapping
-        ), f"Unsupported config type: {type(config)}"
+        assert type(config) in cls._model_mapping, (
+            f"Unsupported config type: {type(config)}"
+        )
         model_cls = cls._model_mapping[type(config)][0]
         model = model_cls.from_pretrained(
             pretrained_model_name_or_path,
@@ -130,7 +130,6 @@ class AutoDistributedTargetModel(AutoModelForCausalLMBase):
 
 
 class AutoDraftModelConfig:
-
     _config_mapping = {
         "LlamaForCausalLMEagle3": LlamaConfig,
     }

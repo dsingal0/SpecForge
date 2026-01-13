@@ -17,7 +17,6 @@ def replace_in_script(script_path: Path, pattern: str, replacement: str):
 
 
 class TestTrainEagle3(unittest.TestCase):
-
     def setUp(self) -> None:
         # prepare data
         data_process = execute_shell_command(

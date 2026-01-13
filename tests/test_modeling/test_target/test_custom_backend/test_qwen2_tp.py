@@ -86,7 +86,6 @@ def test_qwen2_tp(rank, world_size, temp_dir, port):
 
 
 class TestQwen2TP(unittest.TestCase):
-
     def setUp(self):
         self.temp_dir = tempfile.TemporaryDirectory()
 

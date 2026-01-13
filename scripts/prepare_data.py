@@ -3,11 +3,11 @@ import json
 import os
 import subprocess
 from pathlib import Path
-from typing import Dict, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 from tqdm import tqdm
 
-from datasets import concatenate_datasets, config, load_dataset
+from datasets import concatenate_datasets, config, load_dataset, Dataset
 
 """
 This script will convert the ultrachat/sharegpt dataset to the following schema in jsonl format:
@@ -49,14 +49,22 @@ def parse_args():
             "sharegpt4v",
             "allava4v",
             "opc",
+            "hf",
+            "messages",
         ],
         help="The demo dataset to quickly run the training for speculative decoding",
     )
     parser.add_argument(
-        "--output-path",
+        "--hf-split",
+        type=str,
+        default="train",
+        help="The split of the HuggingFace dataset to load (e.g., chat_if, train, test)",
+    )
+    parser.add_argument(
+        "--hf-data-path",
         type=str,
         default=None,
-        help="The path to save the processed dataset, if not specified, the dataset will be saved in the cache/dataset/dataset_name directory of the root path",
+        help="The path to the HuggingFace dataset (e.g., nvidia/Nemotron-Instruction-Following-Chat-v1)",
     )
     parser.add_argument(
         "--data-path",
@@ -86,6 +94,12 @@ def parse_args():
             "all",
         ],
         help="The subset of OpenCoder opc-sft-stage1 dataset to use, or 'all' to use all subsets (default: largescale_diverse_instruct)",
+    )
+    parser.add_argument(
+        "--output-path",
+        type=str,
+        default=None,
+        help="The path to save the processed dataset, if not specified, the default path will be used",
     )
     return parser.parse_args()
 
@@ -136,7 +150,9 @@ def download_vlm_dataset(dataset_name: str) -> None:
         raise Exception(f"Don't support {dataset_name}")
 
 
-def process_ultrachat_row(row: Dict, dataset_name: str = None) -> Tuple[Dict, int]:
+def process_ultrachat_row(
+    row: Dict, dataset_name: Optional[str] = None
+) -> Tuple[Dict, int]:
     """Process a row from the ultrachat dataset.
 
     The function expects a row with the following schema:
@@ -158,7 +174,35 @@ def process_ultrachat_row(row: Dict, dataset_name: str = None) -> Tuple[Dict, in
     return row, 0
 
 
-def process_sharegpt_row(row: Dict, dataset_name: str = None) -> Tuple[Dict, int]:
+def process_messages_row(
+    row: Dict, dataset_name: Optional[str] = None
+) -> Tuple[Dict, int]:
+    """Process a row from a messages-format dataset (e.g., Nemotron).
+
+    The function expects a row with the following schema:
+    "messages": [
+        {
+            "role": "system" | "user" | "assistant",
+            "content": str
+        }
+    ]
+    """
+    conversations = row["messages"]
+    formatted_conversations = []
+    for message in conversations:
+        role = message["role"]
+        content = message["content"]
+        if role not in ["system", "user", "assistant"]:
+            continue
+        formatted_conversations.append({"role": role, "content": content})
+    row_id = row.get("uuid", row.get("id", row.get("prompt_id", "")))
+    row = {"id": row_id, "conversations": formatted_conversations}
+    return row, 0
+
+
+def process_sharegpt_row(
+    row: Dict, dataset_name: Optional[str] = None
+) -> Tuple[Dict, int]:
     """
     sharegpt dataset schema:
     {
@@ -186,7 +230,9 @@ def process_sharegpt_row(row: Dict, dataset_name: str = None) -> Tuple[Dict, int
     return row, skipped_count
 
 
-def process_sharegpt4v_row(row, dataset_name: str = None) -> Dict:
+def process_sharegpt4v_row(
+    row, dataset_name: Optional[str] = None
+) -> Tuple[Optional[Dict[str, Any]], Optional[int]]:
     """
     sharegpt4v dataset schema:
     {
@@ -225,7 +271,7 @@ def process_sharegpt4v_row(row, dataset_name: str = None) -> Dict:
     return row, skipped_count
 
 
-def load_dataset_from_path(data_path: Path):
+def load_dataset_from_path(data_path: Path) -> Dataset:
     suffix = data_path.suffix.split(".")[1]
     ds = load_dataset(suffix, data_files=str(data_path), split="train")
     return ds
@@ -366,9 +412,31 @@ def main():
         else:
             ds = load_dataset("OpenCoder-LLM/opc-sft-stage1", args.opc_subset)["train"]
         proc_fn = process_opc_sft_stage1
+    elif args.dataset == "hf":
+        if args.hf_data_path is None:
+            raise ValueError("--hf-data-path must be specified when using --dataset hf")
+        print(
+            f"Loading HuggingFace dataset: {args.hf_data_path} with split: {args.hf_split}"
+        )
+        ds = load_dataset(args.hf_data_path, split=args.hf_split)
+        proc_fn = None
+    elif args.dataset == "messages":
+        if args.hf_data_path is None and args.data_path is None:
+            raise ValueError(
+                "--hf-data-path or --data-path must be specified when using --dataset messages"
+            )
+        if args.hf_data_path:
+            print(
+                f"Loading HuggingFace dataset: {args.hf_data_path} with split: {args.hf_split}"
+            )
+            ds = load_dataset(args.hf_data_path, split=args.hf_split)
+        else:
+            print(f"Loading dataset from custom data path: {args.data_path}")
+            ds = load_dataset_from_path(Path(args.data_path))
+        proc_fn = process_messages_row
     else:
         raise ValueError(
-            f"This script only supports ultrachat, sharegpt, sharegpt4v, allava4v, opc, and perfect-blend-gptoss-20B datasets for demo purpose, if you wish to use other datasets, please modify this script."
+            "This script only supports ultrachat, sharegpt, sharegpt4v, allava4v, opc, hf, messages, and perfect-blend-gptoss-20B datasets for demo purpose, if you wish to use other datasets, please modify this script."
         )
     # filter and split dataset
     if args.sample_size is not None and args.sample_size < len(ds):

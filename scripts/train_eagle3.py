@@ -1,4 +1,5 @@
 import argparse
+import glob
 import hashlib
 import math
 import os
@@ -10,14 +11,16 @@ import torch
 import torch.distributed as dist
 import torch.nn as nn
 from accelerate.utils import set_seed
+from datasets import load_dataset
+from huggingface_hub import create_repo, snapshot_download, upload_folder
+from safetensors.torch import load_file
 from torch.distributed.fsdp import FullyShardedDataParallel as FSDP
 from torch.distributed.fsdp import MixedPrecision, ShardingStrategy, StateDictType
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from transformers import AutoProcessor, AutoTokenizer
+from transformers import AutoModel, AutoProcessor, AutoTokenizer
 
-from datasets import load_dataset
 from specforge import (
     AutoDraftModelConfig,
     AutoEagle3DraftModel,
@@ -89,8 +92,14 @@ def parse_args() -> Tuple[ArgumentParser, Namespace]:
         "--target-model-backend",
         type=str,
         default="sglang",
-        choices=["sglang", "hf", "custom"],
+        choices=["sglang", "hf", "custom", "vllm"],
         help="The backend of the target model",
+    )
+    model_group.add_argument(
+        "--eagle-head-hf-checkpoint",
+        type=str,
+        default=None,
+        help="HuggingFace Hub repo ID or local path containing a pre-trained Eagle head.",
     )
 
     # dataset arguments
@@ -331,9 +340,9 @@ def sanity_check(args: Namespace) -> None:
         args.draft_accumulation_steps * args.sp_ulysses_size * args.sp_ring_size
     )
     if args.attention_backend == "usp":
-        assert (
-            args.train_hidden_states_path is not None
-        ), "train_hidden_states_path should not be None for usp"
+        assert args.train_hidden_states_path is not None, (
+            "train_hidden_states_path should not be None for usp"
+        )
 
 
 def build_draft_model(args: Namespace) -> Tuple[AutoDraftModelConfig, nn.Module]:
@@ -380,6 +389,53 @@ def build_draft_model(args: Namespace) -> Tuple[AutoDraftModelConfig, nn.Module]
             attention_backend=args.attention_backend,
             torch_dtype=torch.bfloat16,
         ).cuda()
+
+    if args.eagle_head_hf_checkpoint is not None:
+        print_on_rank0(
+            f"Loading Eagle head from HuggingFace hub or local path: {args.eagle_head_hf_checkpoint}"
+        )
+
+        repo_dir = snapshot_download(
+            repo_id=args.eagle_head_hf_checkpoint,
+            cache_dir=args.model_download_dir,
+            allow_patterns=["*.safetensors"],
+        )
+
+        weight_files = sorted(glob.glob(os.path.join(repo_dir, "*.safetensors")))
+        if not weight_files:
+            raise RuntimeError(f"No .safetensors files found in {repo_dir}")
+
+        print_on_rank0(f"Found {len(weight_files)} safetensors file(s). Loading...")
+
+        hf_state = {}
+        for wf in weight_files:
+            print_on_rank0(f"Loading: {wf}")
+            hf_state.update(load_file(wf))
+
+        has_prefix = any(k.startswith("draft_model.") for k in hf_state.keys())
+
+        filtered_state = {}
+        for k, v in hf_state.items():
+            if "embed" in k.lower():
+                continue
+
+            if has_prefix:
+                if k.startswith("draft_model."):
+                    filtered_state[k[len("draft_model.") :]] = v
+            else:
+                filtered_state[k] = v
+
+        if not filtered_state:
+            raise RuntimeError(
+                "Filtered state dict is empty. "
+                "Likely mismatch between checkpoint key format and loader assumptions."
+            )
+
+        missing, unexpected = draft_model.load_state_dict(filtered_state, strict=False)
+
+        print_on_rank0("Eagle head loaded.")
+        print_on_rank0(f"Missing: {missing}")
+        print_on_rank0(f"Unexpected: {unexpected}")
 
     draft_model.load_embedding(args.target_model_path, embedding_key=args.embedding_key)
     draft_model.freeze_embedding()

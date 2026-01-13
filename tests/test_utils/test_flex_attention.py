@@ -25,7 +25,6 @@ torch.manual_seed(0)
 
 
 class TestFlexAttention(unittest.TestCase):
-
     def setUp(self):
         torch.manual_seed(0)
         self.config_dict = {
@@ -244,7 +243,6 @@ class TestFlexAttention(unittest.TestCase):
 
 
 class TestEagle3FlexMask(unittest.TestCase):
-
     def test_eagle3_flex_mask(self):
         B = 1
         H = 1

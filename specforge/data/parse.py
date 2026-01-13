@@ -12,7 +12,6 @@ __all__ = ["GeneralParser", "HarmonyParser"]
 
 
 class Parser(ABC):
-
     def __init__(self, tokenizer: PreTrainedTokenizer, chat_template: ChatTemplate):
         self.tokenizer = tokenizer
         self.chat_template = chat_template
@@ -36,7 +35,6 @@ _harmony_encoding = None
 
 
 class GeneralParser(Parser):
-
     def __init__(self, tokenizer: PreTrainedTokenizer, chat_template: ChatTemplate):
         super().__init__(tokenizer, chat_template)
         self.system_prompt = chat_template.system_prompt
@@ -61,7 +59,7 @@ class GeneralParser(Parser):
 
             if conversation[0]["role"] == "system":
                 warnings.warn(
-                    f"The first message is from system, we will use the system prompt from the data and ignore the system prompt from the template"
+                    "The first message is from system, we will use the system prompt from the data and ignore the system prompt from the template"
                 )
                 messages.append(
                     {"role": "system", "content": conversation[0]["content"]}

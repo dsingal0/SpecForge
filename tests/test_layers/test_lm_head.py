@@ -36,9 +36,9 @@ def run_lm_head(rank, world_size, port):
         sf_output = sf_lm_head(data, gather_output=True)
 
         # check
-        assert torch.allclose(
-            native_output, sf_output, rtol=1e-5, atol=1e-5
-        ), f"bias: {bias}, native_output: \n{native_output}, \nsf_output: \n{sf_output}"
+        assert torch.allclose(native_output, sf_output, rtol=1e-5, atol=1e-5), (
+            f"bias: {bias}, native_output: \n{native_output}, \nsf_output: \n{sf_output}"
+        )
 
         # ===============================
         # Case 2: the output vocab size is not divisible by the TP size
@@ -56,9 +56,9 @@ def run_lm_head(rank, world_size, port):
         sf_output = sf_lm_head(data, gather_output=True)
 
         # check
-        assert torch.allclose(
-            native_output, sf_output, rtol=1e-5, atol=1e-5
-        ), f"bias: {bias}, native_output: \n{native_output}, \nsf_output: \n{sf_output}"
+        assert torch.allclose(native_output, sf_output, rtol=1e-5, atol=1e-5), (
+            f"bias: {bias}, native_output: \n{native_output}, \nsf_output: \n{sf_output}"
+        )
 
         # ===============================
         # Case 3: tie word embedding
@@ -84,15 +84,14 @@ def run_lm_head(rank, world_size, port):
             sf_output = sf_lm_head(data, gather_output=True)
 
             # check
-            assert torch.allclose(
-                native_output, sf_output, rtol=1e-5, atol=1e-5
-            ), f"bias: {bias}, native_output: \n{native_output}, \nsf_output: \n{sf_output}"
+            assert torch.allclose(native_output, sf_output, rtol=1e-5, atol=1e-5), (
+                f"bias: {bias}, native_output: \n{native_output}, \nsf_output: \n{sf_output}"
+            )
 
     dist.destroy_process_group()
 
 
 class TestLMHead(unittest.TestCase):
-
     def test_lm_head(self):
         port = get_available_port()
         mp.spawn(run_lm_head, nprocs=2, args=(2, port))

@@ -34,7 +34,6 @@ class TargetEmbeddingsAndHead(nn.Module):
         device: str = "cuda",
         dtype: torch.dtype = torch.bfloat16,
     ) -> "TargetEmbeddingsAndHead":
-
         # 1. Load Config
         config = AutoConfig.from_pretrained(model_path, cache_dir=cache_dir)
         instance = cls(config)

@@ -168,7 +168,7 @@ class HumanEvalBenchmarker(Benchmarker):
                             full_code, test_code, entry_point
                         ):
                             correct += 1
-                    except Exception as e:
+                    except Exception:
                         # If evaluation fails, consider it incorrect
                         # Uncomment for debugging: print(f"Error evaluating code {i}: {e}")
                         pass

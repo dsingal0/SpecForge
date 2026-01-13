@@ -8,7 +8,6 @@ from .utils import norm_tensor
 
 
 class TestLogSoftmaxLoss(unittest.TestCase):
-
     TTT_LENGTH = 7
 
     def _test_loss_and_gradient_calculation(self, B, T, V):

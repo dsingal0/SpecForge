@@ -79,7 +79,7 @@ def benchmark_loss_method(
             }
         )
 
-        print(f"  Total time (forward + backward): {total_time*1000:.3f}ms")
+        print(f"  Total time (forward + backward): {total_time * 1000:.3f}ms")
         print(f"  Peak memory: {peak_memory / 1024**3:.3f} GB")
 
     return results
@@ -125,7 +125,7 @@ def main():
     triton_results = benchmark_loss_method("triton", test_configs)
 
     # Print results summary
-    print(f"\n=== Performance Summary ===")
+    print("\n=== Performance Summary ===")
     print(f"Configurations tested: {len(test_configs)}")
 
     # Print detailed results table
@@ -148,11 +148,11 @@ def main():
         )
 
         if pytorch_result and triton_result:
-            pytorch_time_str = f"{pytorch_result['time_total']*1000:.2f}"
-            pytorch_mem_str = f"{pytorch_result['peak_memory']/1024**3:.2f}"
+            pytorch_time_str = f"{pytorch_result['time_total'] * 1000:.2f}"
+            pytorch_mem_str = f"{pytorch_result['peak_memory'] / 1024**3:.2f}"
 
-            triton_time_str = f"{triton_result['time_total']*1000:.2f}"
-            triton_mem_str = f"{triton_result['peak_memory']/1024**3:.2f}"
+            triton_time_str = f"{triton_result['time_total'] * 1000:.2f}"
+            triton_mem_str = f"{triton_result['peak_memory'] / 1024**3:.2f}"
 
             if triton_result["time_total"] > 0:
                 speedup = pytorch_result["time_total"] / triton_result["time_total"]

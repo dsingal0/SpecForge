@@ -32,9 +32,9 @@ def init_distributed_environment(
         rank,
         backend,
     )
-    assert (
-        torch.distributed.is_initialized()
-    ), "distributed environment should be initialized first"
+    assert torch.distributed.is_initialized(), (
+        "distributed environment should be initialized first"
+    )
 
     tp_group = get_specforge_tp_group()
     world_size = dist.get_world_size()
@@ -110,9 +110,9 @@ def initialize_model_parallel(
     num_tensor_model_parallel_groups: int = (
         dist.get_world_size() // tensor_model_parallel_size
     )
-    assert (
-        parallel_state._TP is None
-    ), "tensor model parallel group is already initialized"
+    assert parallel_state._TP is None, (
+        "tensor model parallel group is already initialized"
+    )
     group_ranks = []
     for i in range(num_tensor_model_parallel_groups):
         ranks = list(
@@ -134,12 +134,12 @@ def initialize_model_parallel(
     )
 
     if duplicate_tp_group:
-        assert (
-            parallel_state._PDMUX_PREFILL_TP_GROUP is None
-        ), "tensor model parallel group for PD-Multiplexing Prefill is already initialized"
-        assert (
-            parallel_state._PDMUX_PREFILL_TP_GROUP is None
-        ), "tensor model parallel group for PD-Multiplexing Prefill is already initialized"
+        assert parallel_state._PDMUX_PREFILL_TP_GROUP is None, (
+            "tensor model parallel group for PD-Multiplexing Prefill is already initialized"
+        )
+        assert parallel_state._PDMUX_PREFILL_TP_GROUP is None, (
+            "tensor model parallel group for PD-Multiplexing Prefill is already initialized"
+        )
         parallel_state._PDMUX_PREFILL_TP_GROUP = init_model_parallel_group(
             group_ranks,
             parallel_state._WORLD.local_rank,
@@ -157,9 +157,9 @@ def initialize_model_parallel(
     moe_ep_size = expert_model_parallel_size
 
     moe_tp_size = tensor_model_parallel_size // moe_ep_size
-    assert (
-        parallel_state._MOE_EP is None
-    ), "expert model parallel group is already initialized"
+    assert parallel_state._MOE_EP is None, (
+        "expert model parallel group is already initialized"
+    )
     group_ranks = []
     for i in range(num_tensor_model_parallel_groups):
         for j in range(moe_tp_size):
@@ -176,9 +176,9 @@ def initialize_model_parallel(
         group_name="moe_ep",
     )
 
-    assert (
-        parallel_state._MOE_TP is None
-    ), "moe tensor model parallel group is already initialized"
+    assert parallel_state._MOE_TP is None, (
+        "moe tensor model parallel group is already initialized"
+    )
     if moe_ep_size == 1:
         parallel_state._MOE_TP = parallel_state._TP
     else:
@@ -201,9 +201,9 @@ def initialize_model_parallel(
     num_pipeline_model_parallel_groups: int = (
         dist.get_world_size() // pipeline_model_parallel_size
     )
-    assert (
-        parallel_state._PP is None
-    ), "pipeline model parallel group is already initialized"
+    assert parallel_state._PP is None, (
+        "pipeline model parallel group is already initialized"
+    )
     group_ranks = []
     for i in range(num_pipeline_model_parallel_groups):
         ranks = list(

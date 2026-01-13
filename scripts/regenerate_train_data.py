@@ -1,4 +1,4 @@
-﻿"""
+"""
 This script will re-generate the dataset from target model,
 which better aligns the draft model with the target model’s output distribution.
 
@@ -244,7 +244,7 @@ def main():
     if args.max_tokens <= 0:
         raise ValueError("Max tokens must be greater than 0")
 
-    print(f"Configuration:")
+    print("Configuration:")
     print(f"  Model path: {args.model}")
     print(f"  Max tokens: {args.max_tokens}")
     print(f"  Concurrency: {args.concurrency}")
@@ -292,9 +292,11 @@ def main():
     error_samples = 0
 
     # Create progress bar
-    with open(args.input_file_path, "r") as input_file, open(
-        args.output_file_path, "w"
-    ) as output_file_handle, open(error_file_path, "w") as error_file_handle:
+    with (
+        open(args.input_file_path, "r") as input_file,
+        open(args.output_file_path, "w") as output_file_handle,
+        open(error_file_path, "w") as error_file_handle,
+    ):
         executor = ThreadPoolExecutor(
             max_workers=args.concurrency * len(valid_server_addresses)
         )
@@ -385,7 +387,7 @@ def main():
                     )
                     success_samples += 1
 
-    print(f"\nProcessing completed!")
+    print("\nProcessing completed!")
     if success_samples > 0:
         avg_len = context_token_sum / success_samples
         print("Context length statistics (token count over conversations):")

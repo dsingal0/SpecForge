@@ -7,7 +7,6 @@ CACHE_DIR = Path(__file__).parent.parent.parent.joinpath("cache")
 
 
 class TestRegenerateTrainData(unittest.TestCase):
-
     def test_regenerate_sharegpt(self):
         # prepare data
         data_process = execute_shell_command(
@@ -28,7 +27,7 @@ class TestRegenerateTrainData(unittest.TestCase):
             disable_proxy=True,
             enable_hf_mirror=True,
         )
-        wait_for_server(f"http://localhost:30000", disable_proxy=True)
+        wait_for_server("http://localhost:30000", disable_proxy=True)
 
         regeneration_process = execute_shell_command(
             """python scripts/regenerate_train_data.py \

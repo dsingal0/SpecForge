@@ -18,7 +18,6 @@ from specforge.modeling.draft.llama3_eagle import (
 
 
 class TestLlamaForCausalLMEagle3Loading(unittest.TestCase):
-
     def setUp(self):
         """Set up the test environment before each test."""
         self.temp_dir = tempfile.mkdtemp()

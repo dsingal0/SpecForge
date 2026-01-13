@@ -85,7 +85,6 @@ def test_phi3_tp(rank, world_size, temp_dir, port):
 
 
 class TestPhi3TP(unittest.TestCase):
-
     def setUp(self):
         self.temp_dir = tempfile.TemporaryDirectory()
 

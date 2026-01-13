@@ -10,7 +10,6 @@ from specforge.distributed import get_tp_group, shard_tensor
 
 
 class ParallelLMHead(nn.Module):
-
     def __init__(
         self,
         in_features: int,

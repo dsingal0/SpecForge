@@ -114,9 +114,9 @@ class DataCollatorWithPadding:
             "target": None,
         }
         if all("hidden_state" in item for item in features):
-            assert all(
-                "target" in item for item in features
-            ), "target is required when hidden_state is provided"
+            assert all("target" in item for item in features), (
+                "target is required when hidden_state is provided"
+            )
             batch["hidden_state"] = torch.cat(
                 [
                     self.paddingtensor(item["hidden_state"], max_length)
@@ -213,9 +213,9 @@ class VlmDataCollatorWithPadding:
             "target": None,
         }
         if all("hidden_state" in item for item in features):
-            assert all(
-                "target" in item for item in features
-            ), "target is required when hidden_state is provided"
+            assert all("target" in item for item in features), (
+                "target is required when hidden_state is provided"
+            )
             batch["hidden_state"] = torch.cat(
                 [
                     self.paddingtensor(item["hidden_state"], max_length)
@@ -237,7 +237,7 @@ def prepare_dp_dataloaders(
     shuffle: Optional[bool] = False,
     is_vlm: Optional[bool] = False,
     prefetch_factor: Optional[int] = 2,
-    **dataloader_kwargs
+    **dataloader_kwargs,
 ) -> DataLoader:
     """
     Prepare dataloader for distributed data parallel training.
@@ -277,7 +277,7 @@ def prepare_dp_dataloaders(
         prefetch_factor=prefetch_factor,
         collate_fn=datacollator_cls(),
         drop_last=True,
-        **dataloader_kwargs
+        **dataloader_kwargs,
     )
     return dataloader
 

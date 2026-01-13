@@ -85,7 +85,6 @@ def test_moe(rank, world_size, port, tp_size):
 
 
 class TestTargetModelBackend(unittest.TestCase):
-
     def test_sglang_backend_with_dense(self):
         world_size = 2
         port = get_available_port()

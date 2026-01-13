@@ -123,9 +123,9 @@ class CEvalBenchmarker(Benchmarker):
             configs_to_load = all_configs
         else:
             for subset in self.subset:
-                assert (
-                    subset in all_configs
-                ), f"Subset {subset} not found in C-Eval dataset"
+                assert subset in all_configs, (
+                    f"Subset {subset} not found in C-Eval dataset"
+                )
             configs_to_load = self.subset
 
         # Load datasets

@@ -100,22 +100,22 @@ def print_results(
     avg_throughput = np.mean([m.output_throughput for m in metrics_list])
     avg_accept_length = np.mean([m.accept_length for m in metrics_list])
 
-    print(f"\n{'='*50}")
+    print(f"\n{'=' * 50}")
     print(f"{benchmark_name} Evaluation Results")
-    print(f"{'='*50}")
+    print(f"{'=' * 50}")
     print(f"Number of questions: {metrics_list[0].num_questions}")
     if show_accuracy:
         if metrics_list[0].accuracy is not None:
             avg_accuracy = np.mean(
                 [m.accuracy for m in metrics_list if m.accuracy is not None]
             )
-            print(f"Average Accuracy: {avg_accuracy:.4f} ({avg_accuracy*100:.2f}%)")
+            print(f"Average Accuracy: {avg_accuracy:.4f} ({avg_accuracy * 100:.2f}%)")
         else:
-            print(f"Average Accuracy: None")
+            print("Average Accuracy: None")
     print(f"Average Latency: {avg_latency:.3f} s")
     print(f"Average Output throughput: {avg_throughput:.3f} token/s")
     print(f"Average Accept length: {avg_accept_length:.3f}")
-    print(f"{'='*50}\n")
+    print(f"{'=' * 50}\n")
 
 
 def create_simple_sgl_function(
@@ -228,8 +228,8 @@ def create_multi_turn_sgl_function(
             if system_prompt:
                 s += sgl.system(system_prompt)
             for i in range(num_turns):
-                question_key = f"question_{i+1}"
-                answer_key = f"answer_{i+1}"
+                question_key = f"question_{i + 1}"
+                answer_key = f"answer_{i + 1}"
                 if question_key in kwargs:
                     s += sgl.user(kwargs[question_key])
                     s += sgl.assistant(sgl.gen(answer_key, max_tokens=max_tokens))

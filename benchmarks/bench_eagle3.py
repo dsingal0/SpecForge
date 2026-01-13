@@ -41,6 +41,7 @@ python bench_eagle3.py \
     --dtype bfloat16 \
     --skip-launch-server
 """
+
 import argparse
 import json
 import os

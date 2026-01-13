@@ -271,14 +271,14 @@ def plot_results(eagle_results, flex_results, seq_lengths):
     plt.show()
 
     # Print summary statistics
-    print(f"\n=== Performance Summary ===")
+    print("\n=== Performance Summary ===")
     print(f"Sequence lengths tested: {seq_lengths}")
-    print(f"\nSpeed ratios (Eagle/Flex):")
+    print("\nSpeed ratios (Eagle/Flex):")
     for i, seq_len in enumerate(seq_lengths):
         ratio = eagle_times[i] / flex_times[i] if flex_times[i] > 0 else float("inf")
         print(f"  {seq_len:4d}: {ratio:.2f}x")
 
-    print(f"\nMemory ratios (Eagle/Flex):")
+    print("\nMemory ratios (Eagle/Flex):")
     for i, seq_len in enumerate(seq_lengths):
         ratio = eagle_memory[i] / flex_memory[i] if flex_memory[i] > 0 else float("inf")
         print(f"  {seq_len:4d}: {ratio:.2f}x")

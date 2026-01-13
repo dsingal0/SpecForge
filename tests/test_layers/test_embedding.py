@@ -33,9 +33,9 @@ def run_embedding(rank, world_size, port):
     sf_output = sf_embedding(data)
 
     # check
-    assert torch.allclose(
-        native_output, sf_output, rtol=1e-5, atol=1e-5
-    ), f"native_output: \n{native_output}, \nsf_output: \n{sf_output}"
+    assert torch.allclose(native_output, sf_output, rtol=1e-5, atol=1e-5), (
+        f"native_output: \n{native_output}, \nsf_output: \n{sf_output}"
+    )
 
     # ===============================
     # Case 2: vocab size is NOT divisible by the TP size
@@ -51,15 +51,14 @@ def run_embedding(rank, world_size, port):
     sf_output = sf_embedding(data)
 
     # check
-    assert torch.allclose(
-        native_output, sf_output, rtol=1e-5, atol=1e-5
-    ), f"native_output: \n{native_output}, \nsf_output: \n{sf_output}"
+    assert torch.allclose(native_output, sf_output, rtol=1e-5, atol=1e-5), (
+        f"native_output: \n{native_output}, \nsf_output: \n{sf_output}"
+    )
 
     dist.destroy_process_group()
 
 
 class TestEmbedding(unittest.TestCase):
-
     def test_embedding(self):
         port = get_available_port()
         mp.spawn(run_embedding, nprocs=2, args=(2, port))
