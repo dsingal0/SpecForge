@@ -185,9 +185,7 @@ def test_ttt(rank, world_size, port):
         ],
         rtol=2e-2,
         atol=2e-2,
-    ), (
-        f"usp_output: \n{usp_hidden_states_out}, \nsdpa_output: \n{sdpa_hidden_states_out}"
-    )
+    ), f"usp_output: \n{usp_hidden_states_out}, \nsdpa_output: \n{sdpa_hidden_states_out}"
 
 
 class TestLinear(unittest.TestCase):

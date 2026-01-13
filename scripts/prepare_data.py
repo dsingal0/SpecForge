@@ -7,7 +7,7 @@ from typing import Any, Dict, Optional, Tuple
 
 from tqdm import tqdm
 
-from datasets import concatenate_datasets, config, load_dataset, Dataset
+from datasets import Dataset, concatenate_datasets, config, load_dataset
 
 """
 This script will convert the ultrachat/sharegpt dataset to the following schema in jsonl format:

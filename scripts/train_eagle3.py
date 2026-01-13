@@ -11,16 +11,16 @@ import torch
 import torch.distributed as dist
 import torch.nn as nn
 from accelerate.utils import set_seed
-from datasets import load_dataset
-from huggingface_hub import create_repo, snapshot_download, upload_folder
+from huggingface_hub import snapshot_download
 from safetensors.torch import load_file
 from torch.distributed.fsdp import FullyShardedDataParallel as FSDP
 from torch.distributed.fsdp import MixedPrecision, ShardingStrategy, StateDictType
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from transformers import AutoModel, AutoProcessor, AutoTokenizer
+from transformers import AutoProcessor, AutoTokenizer
 
+from datasets import load_dataset
 from specforge import (
     AutoDraftModelConfig,
     AutoEagle3DraftModel,
@@ -340,9 +340,9 @@ def sanity_check(args: Namespace) -> None:
         args.draft_accumulation_steps * args.sp_ulysses_size * args.sp_ring_size
     )
     if args.attention_backend == "usp":
-        assert args.train_hidden_states_path is not None, (
-            "train_hidden_states_path should not be None for usp"
-        )
+        assert (
+            args.train_hidden_states_path is not None
+        ), "train_hidden_states_path should not be None for usp"
 
 
 def build_draft_model(args: Namespace) -> Tuple[AutoDraftModelConfig, nn.Module]:

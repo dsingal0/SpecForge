@@ -52,9 +52,9 @@ def test_target_model_backend(rank, world_size, port, tp_size):
     del custom_target_model
 
     # compare weights
-    assert torch.allclose(hf_out.target, custom_out.target, atol=1e-5, rtol=1e-5), (
-        f"Logits are not close: \nhf: {hf_out[0] - custom_out[0]}"
-    )
+    assert torch.allclose(
+        hf_out.target, custom_out.target, atol=1e-5, rtol=1e-5
+    ), f"Logits are not close: \nhf: {hf_out[0] - custom_out[0]}"
     assert torch.allclose(
         hf_out.loss_mask, custom_out.loss_mask, atol=1e-5, rtol=1e-5
     ), f"Logits are not close: \ndiff: {hf_out[1] - custom_out[1]}"
@@ -78,12 +78,10 @@ def test_target_model_backend(rank, world_size, port, tp_size):
     assert torch.equal(hf_out.input_ids, sgl_out.input_ids)
     assert torch.allclose(
         hf_out.hidden_states, sgl_out.hidden_states, atol=1e-1, rtol=1e-2
-    ), (
-        f"Hidden states are not close, diff: \n{(hf_out.hidden_states - sgl_out.hidden_states).abs().max()}"
-    )
-    assert torch.allclose(hf_out.target, sgl_out.target.half(), atol=1e-1, rtol=1e-2), (
-        f"Target are not close, diff: \n{(hf_out.target - sgl_out.target).abs().max()}"
-    )
+    ), f"Hidden states are not close, diff: \n{(hf_out.hidden_states - sgl_out.hidden_states).abs().max()}"
+    assert torch.allclose(
+        hf_out.target, sgl_out.target.half(), atol=1e-1, rtol=1e-2
+    ), f"Target are not close, diff: \n{(hf_out.target - sgl_out.target).abs().max()}"
 
 
 class TestTargetModelBackend(unittest.TestCase):

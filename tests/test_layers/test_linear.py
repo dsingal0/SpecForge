@@ -36,9 +36,9 @@ def run_column_parallel_linear(rank, world_size, port):
     full_sf_output = gather_tensor(sf_output, get_tp_group())
 
     # check
-    assert torch.allclose(native_output, full_sf_output, rtol=1e-5, atol=1e-5), (
-        f"native_output: \n{native_output}, \nsf_output: \n{sf_output}"
-    )
+    assert torch.allclose(
+        native_output, full_sf_output, rtol=1e-5, atol=1e-5
+    ), f"native_output: \n{native_output}, \nsf_output: \n{sf_output}"
 
     # ===============================
     # Case 2: merged QKV layout
@@ -59,15 +59,15 @@ def run_column_parallel_linear(rank, world_size, port):
     full_sf_v = gather_tensor(sf_v, get_tp_group())
 
     # check
-    assert torch.allclose(q, full_sf_q, rtol=1e-5, atol=1e-5), (
-        f"q: \n{q}, \nfull_sf_q: \n{full_sf_q}"
-    )
-    assert torch.allclose(k, full_sf_k, rtol=1e-5, atol=1e-5), (
-        f"k: \n{k}, \nfull_sf_k: \n{full_sf_k}"
-    )
-    assert torch.allclose(v, full_sf_v, rtol=1e-5, atol=1e-5), (
-        f"v: \n{v}, \nfull_sf_v: \n{full_sf_v}"
-    )
+    assert torch.allclose(
+        q, full_sf_q, rtol=1e-5, atol=1e-5
+    ), f"q: \n{q}, \nfull_sf_q: \n{full_sf_q}"
+    assert torch.allclose(
+        k, full_sf_k, rtol=1e-5, atol=1e-5
+    ), f"k: \n{k}, \nfull_sf_k: \n{full_sf_k}"
+    assert torch.allclose(
+        v, full_sf_v, rtol=1e-5, atol=1e-5
+    ), f"v: \n{v}, \nfull_sf_v: \n{full_sf_v}"
 
     # ===============================
     # Case 3: gate_up layout
@@ -87,12 +87,12 @@ def run_column_parallel_linear(rank, world_size, port):
     full_sf_up = gather_tensor(sf_up, get_tp_group())
 
     # check
-    assert torch.allclose(gate, full_sf_gate, rtol=1e-5, atol=1e-5), (
-        f"gate: \n{gate}, \nfull_sf_gate: \n{full_sf_gate}"
-    )
-    assert torch.allclose(up, full_sf_up, rtol=1e-5, atol=1e-5), (
-        f"up: \n{up}, \nfull_sf_up: \n{full_sf_up}"
-    )
+    assert torch.allclose(
+        gate, full_sf_gate, rtol=1e-5, atol=1e-5
+    ), f"gate: \n{gate}, \nfull_sf_gate: \n{full_sf_gate}"
+    assert torch.allclose(
+        up, full_sf_up, rtol=1e-5, atol=1e-5
+    ), f"up: \n{up}, \nfull_sf_up: \n{full_sf_up}"
 
     dist.destroy_process_group()
 
@@ -124,9 +124,9 @@ def run_row_parallel_linear(rank, world_size, port):
     dist.all_reduce(sf_output, op=dist.ReduceOp.SUM, group=get_tp_group())
 
     # check
-    assert torch.allclose(native_output, sf_output, rtol=1e-5, atol=1e-5), (
-        f"native_output: \n{native_output}, \nfull_sf_output: \n{full_sf_output}"
-    )
+    assert torch.allclose(
+        native_output, sf_output, rtol=1e-5, atol=1e-5
+    ), f"native_output: \n{native_output}, \nfull_sf_output: \n{full_sf_output}"
 
 
 class TestLinear(unittest.TestCase):

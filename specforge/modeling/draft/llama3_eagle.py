@@ -736,9 +736,9 @@ class LlamaAttention(nn.Module):
 class LlamaUSPAttention(LlamaAttention):
     def __init__(self, config):
         super().__init__(config)
-        assert dist.is_initialized(), (
-            "LlamaUSPAttention requires torch.distributed; call init_distributed first."
-        )
+        assert (
+            dist.is_initialized()
+        ), "LlamaUSPAttention requires torch.distributed; call init_distributed first."
         self.rank = torch.distributed.get_rank()
         self.ring_pg = get_sp_ring_group()
         self.ulysses_pg = get_sp_ulysses_group()

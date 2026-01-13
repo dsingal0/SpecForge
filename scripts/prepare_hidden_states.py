@@ -562,9 +562,9 @@ def main():
         )
 
     # Load complete dataset
-    assert os.path.exists(args.data_path), (
-        f"Dataset path {args.data_path} does not exist"
-    )
+    assert os.path.exists(
+        args.data_path
+    ), f"Dataset path {args.data_path} does not exist"
     dataset = load_dataset("json", data_files=args.data_path)["train"]
     if args.num_samples is not None:
         dataset = dataset.select(range(args.num_samples))
